@@ -15,7 +15,6 @@ const schema = Type.Object({
 
 	// === DATABASE CONFIG ===
 	DATABASE_URL: Type.String(),
-	DATABASE_CONNECTIONS: Type.Number({ default: 5 }),
 }, {
 	additionalProperties: true
 });

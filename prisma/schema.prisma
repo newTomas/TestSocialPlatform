@@ -20,7 +20,7 @@ model User {
 
 model Post {
   id        String    @id @default(uuid(7))
-  text      String
+  text      String    @db.Text
   User      User      @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   deletedAt DateTime?
@@ -30,7 +30,7 @@ model Post {
 
 model RefreshToken {
   id        BigInt   @id @default(autoincrement())
-  token     String
+  token     String   @db.Text
   User      User     @relation(fields: [userId], references: [id])
   expiredAt DateTime
   createdAt DateTime @default(now())

@@ -1,12 +1,14 @@
-import { Transform } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { IsAlphanumeric, IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 
 export class EditPostDto {
+	@Expose()
 	@IsUUID(7, { message: 'Id must be a number.' })
 	@IsNotEmpty({ message: 'Id is required.' })
 	@Transform(val => BigInt(val.value))
 	public id!: string;
 
+	@Expose()
 	@IsString({ message: 'Text must be a string.' })
 	@IsNotEmpty({ message: 'Text is required.' })
 	@IsAlphanumeric(undefined, { message: "Text must be alphanumeric" })

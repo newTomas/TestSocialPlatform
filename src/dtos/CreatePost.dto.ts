@@ -1,6 +1,8 @@
+import { Expose } from 'class-transformer';
 import { IsString, IsNotEmpty, Length, IsAlphanumeric } from 'class-validator';
 
 export class CreatePostDto {
+	@Expose()
 	@IsString({ message: 'Text must be a string.' })
 	@IsNotEmpty({ message: 'Text is required.' })
 	@IsAlphanumeric(undefined, { message: "Text must be alphanumeric" })

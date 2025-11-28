@@ -14,5 +14,4 @@ export const serverConfig = {
 
 export const databaseConfig = {
 	databaseUrl: env.DATABASE_URL,
-	connections: env.DATABASE_CONNECTIONS,
 }
