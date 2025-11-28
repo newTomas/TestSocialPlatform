@@ -12,11 +12,16 @@ export class PrismaPostRepository implements IPostRepository {
         text,
       },
     })
-    return {
-      id: post.id,
-      userId: post.userId,
-      text: post.text,
-      createdAt: post.createdAt.toString(),
-    };
+    return post;
+  }
+
+  async get(id: bigint): Promise<IPost | null> {
+    const post = await this.prisma.post.findUnique({
+      where: {
+        id,
+      }
+    });
+
+    return post;
   }
 }
