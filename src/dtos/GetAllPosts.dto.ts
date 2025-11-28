@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsNumber, IsString, IsUUID, Max, Min } from 'class-validator';
 
 export class GetAllPostsDto {
 	@IsString({ message: 'Cursor must be a number.' })
@@ -11,4 +11,7 @@ export class GetAllPostsDto {
 	@Min(1)
 	@Max(1000)
 	public limit: number = 100;
+
+	@IsUUID(7, { message: 'userId must be a UUID.' })
+	public userId?: string;
 }

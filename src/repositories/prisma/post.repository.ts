@@ -39,6 +39,10 @@ export class PrismaPostRepository implements IPostRepository {
       take: dto.limit,
     };
 
+    if (dto.userId) {
+      args.where!.userId = dto.userId;
+    }
+
     if (dto.cursor) {
       args.cursor = {
         id: dto.cursor
