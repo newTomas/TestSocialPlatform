@@ -22,6 +22,9 @@
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.0.1",
     "@prisma/client": "^7.0.1",
+    "@sinclair/typebox": "^0.34.41",
+    "dotenv": "^17.2.3",
+    "env-schema": "^7.0.0",
     "express": "^5.1.0"
   }
 }
