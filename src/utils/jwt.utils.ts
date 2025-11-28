@@ -26,3 +26,11 @@ export function verifyRefreshToken(token: string) {
 		throw new Error('Invalid or expired refresh token signature.');
 	}
 };
+
+export function verifyAccessToken(token: string): IJwtPayload {
+	try {
+		return jwt.verify(token, jwtConfig.accessSecret) as IJwtPayload;
+	} catch (error) {
+		throw new Error('Access token is invalid or expired.');
+	}
+};
