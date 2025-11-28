@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import prisma from '../utils/prisma.utils.js';
 import { validationMiddleware } from '../middlewares/validation.middleware.js';
-import { CreatePostDto } from 'src/dtos/CreatePost.dto.js';
-import { PostController } from 'src/controllers/post.controller.js';
-import { PostService } from 'src/services/post.service.js';
-import { PrismaPostRepository } from 'src/repositories/prisma/post.repository.js';
-import { authMiddleware } from 'src/middlewares/auth.middleware.js';
-import { GetPostDto } from 'src/dtos/GetPost.dto.js';
+import { CreatePostDto } from '../dtos/CreatePost.dto.js';
+import { PostController } from '../controllers/post.controller.js';
+import { PostService } from '../services/post.service.js';
+import { PrismaPostRepository } from '../repositories/prisma/post.repository.js';
+import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { GetPostDto } from '../dtos/GetPost.dto.js';
+import { GetAllPostsDto } from '../dtos/GetAllPosts.dto.js';
+import { EditPostDto } from '../dtos/EditPost.dto.js';
+import { DeletePostDto } from '../dtos/DeletePost.dto.js';
 
 const router = Router();
 
@@ -16,7 +19,13 @@ const postService = new PostService(postRepo);
 
 const postController = new PostController(postService);
 
+// === PRIVATE ===
 router.post('/', authMiddleware, validationMiddleware(CreatePostDto), postController.create.bind(postController));
+router.patch('/:id', authMiddleware, validationMiddleware(EditPostDto), postController.edit.bind(postController));
+router.delete('/:id', authMiddleware, validationMiddleware(DeletePostDto), postController.delete.bind(postController));
+
+// === PUBLIC ===
+router.get('/', validationMiddleware(GetAllPostsDto), postController.getAll.bind(postController));
 router.get('/:id', validationMiddleware(GetPostDto), postController.get.bind(postController));
 
 export default router;

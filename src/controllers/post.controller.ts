@@ -1,10 +1,37 @@
 import { Request, Response } from 'express';
-import { PostService } from 'src/services/post.service.js';
-import { CreatePostDto } from 'src/dtos/CreatePost.dto.js';
-import { GetPostDto } from 'src/dtos/GetPost.dto.js';
+import { PostService } from '../services/post.service.js';
+import { CreatePostDto } from '../dtos/CreatePost.dto.js';
+import { GetPostDto } from '../dtos/GetPost.dto.js';
+import { GetAllPostsDto } from '../dtos/GetAllPosts.dto.js';
+import { DeletePostDto } from '../dtos/DeletePost.dto.js';
+import { EditPostDto } from '../dtos/EditPost.dto.js';
 
 export class PostController {
   constructor(private readonly postService: PostService) { }
+
+  public async get(req: Request, res: Response) {
+    try {
+      const dto: GetPostDto = req.body;
+
+      const result = await this.postService.GetPost(dto);
+
+      return res.status(result ? 200 : 404).json(result);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+
+  public async getAll(req: Request, res: Response) {
+    try {
+      const dto: GetAllPostsDto = req.body;
+
+      const result = await this.postService.GetAllPosts(dto);
+
+      return res.status(result ? 200 : 404).json(result);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
 
   public async create(req: Request, res: Response) {
     try {
@@ -18,11 +45,23 @@ export class PostController {
     }
   }
 
-  public async get(req: Request, res: Response) {
+  public async delete(req: Request, res: Response) {
     try {
-      const dto: GetPostDto = req.body;
+      const dto: DeletePostDto = req.body;
 
-      const result = await this.postService.GetPost(dto);
+      const result = await this.postService.DeletePost(req.user!.userId, dto);
+
+      return res.status(result ? 200 : 404).json(result);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+
+  public async edit(req: Request, res: Response) {
+    try {
+      const dto: EditPostDto = req.body;
+
+      const result = await this.postService.EditPost(req.user!.userId, dto);
 
       return res.status(result ? 200 : 404).json(result);
     } catch (error: any) {

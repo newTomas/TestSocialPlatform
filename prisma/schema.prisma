@@ -8,10 +8,10 @@ datasource db {
 }
 
 model User {
-  id       BigInt @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
+  id        String   @id @default(uuid(7))
+  name      String
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
 
   posts         Post[]
@@ -19,12 +19,13 @@ model User {
 }
 
 model Post {
-  id   BigInt @id @default(autoincrement())
-  text String
-  User User   @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id        String    @id @default(uuid(7))
+  text      String
+  User      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
 
-  userId BigInt
+  userId String
 }
 
 model RefreshToken {
@@ -34,5 +35,5 @@ model RefreshToken {
   expiredAt DateTime
   createdAt DateTime @default(now())
 
-  userId BigInt
+  userId String
 }

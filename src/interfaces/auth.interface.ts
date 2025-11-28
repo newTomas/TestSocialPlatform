@@ -1,11 +1,11 @@
 export interface IJwtPayload {
-	userId: bigint;
+	userId: string;
 	email: string;
 }
 
 export interface IAuthResponse {
   user: {
-    id: bigint;
+    id: string;
     email: string;
     name: string;
   };

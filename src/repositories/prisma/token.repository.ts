@@ -4,7 +4,7 @@ import { ITokenRepository } from '../interfaces/token.repository.interface.js';
 export class PrismaTokenRepository implements ITokenRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async save(userId: bigint, token: string, expiresAt: Date): Promise<RefreshToken> {
+  async save(userId: string, token: string, expiresAt: Date): Promise<RefreshToken> {
     return this.prisma.refreshToken.create({
       data: {
         userId,
@@ -26,7 +26,7 @@ export class PrismaTokenRepository implements ITokenRepository {
     });
   }
 
-  async deleteAllByUserId(userId: bigint): Promise<void> {
+  async deleteAllByUserId(userId: string): Promise<void> {
     await this.prisma.refreshToken.deleteMany({
       where: { userId },
     });
