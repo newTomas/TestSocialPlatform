@@ -1,8 +1,8 @@
 import { Transform } from 'class-transformer';
-import { IsAlphanumeric, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { IsAlphanumeric, IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 
 export class EditPostDto {
-	@IsNumber({}, { message: 'Id must be a number.' })
+	@IsUUID(7, { message: 'Id must be a number.' })
 	@IsNotEmpty({ message: 'Id is required.' })
 	@Transform(val => BigInt(val.value))
 	public id!: string;
