@@ -2,19 +2,23 @@
   "name": "testsocialplatform",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
+    "check": "tsc --noEmit --skipLibCheck",
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
-    "start": "node dist/index.js"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
     "prisma": "^7.0.1",
     "typescript": "^5.9.3"
@@ -23,8 +27,15 @@
     "@prisma/adapter-mariadb": "^7.0.1",
     "@prisma/client": "^7.0.1",
     "@sinclair/typebox": "^0.34.41",
+    "bcryptjs": "^3.0.3",
+    "class-sanitizer": "^1.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "env-schema": "^7.0.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }
