@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service.js';
 import { CreateUserDto } from '../dtos/CreateUser.dto.js';
 import { LoginUserDto } from '../dtos/LoginUser.dto.js';
+import { RefreshTokenDto } from '../dtos/RefreshToken.dto.js';
 
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -30,8 +31,8 @@ export class AuthController {
 
   public async refresh(req: Request, res: Response) {
     try {
-      const { refreshToken } = req.body;
-      const result = await this.authService.refresh(refreshToken);
+      const dto: RefreshTokenDto = req.body;
+      const result = await this.authService.refresh(dto.refreshToken);
       return res.json(result);
     } catch (error: any) {
       return res.status(403).json({ message: error.message });

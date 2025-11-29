@@ -7,6 +7,8 @@ import prisma from '../utils/prisma.utils.js';
 import { validationMiddleware } from '../middlewares/validation.middleware.js';
 import { CreateUserDto } from '../dtos/CreateUser.dto.js';
 import { PrismaDatabaseService } from '../database/prisma.database.service.js';
+import { LoginUserDto } from '../dtos/LoginUser.dto.js';
+import { RefreshTokenDto } from '../dtos/RefreshToken.dto.js';
 
 const router = Router();
 
@@ -19,7 +21,7 @@ const authService = new AuthService(userRepo, tokenRepo, dbService);
 const authController = new AuthController(authService);
 
 router.post('/register', validationMiddleware(CreateUserDto), authController.register.bind(authController));
-router.post('/login', authController.login.bind(authController));
-router.post('/refresh', authController.refresh.bind(authController));
+router.post('/login', validationMiddleware(LoginUserDto), authController.login.bind(authController));
+router.post('/refresh', validationMiddleware(RefreshTokenDto), authController.refresh.bind(authController));
 
 export default router;
