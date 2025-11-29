@@ -4,8 +4,7 @@ import { validationMiddleware } from '../middlewares/validation.middleware.js';
 import { UserController } from '../controllers/user.controller.js';
 import { UserService } from '../services/user.service.js';
 import { PrismaUserRepository } from '../repositories/prisma/user.repository.js';
-import { GetAllUsersDto } from '../dtos/GetAllUsers.dto.js';
-import { GetUserDto } from '../dtos/GetUser.dto.js';
+import { GetAllUsersDto, GetUserDto } from '../dtos/User.dto.js';
 
 const router = Router();
 

@@ -1,10 +1,6 @@
 import { IPost, IPosts } from '../interfaces/post.interface.js';
-import { CreatePostDto } from '../dtos/CreatePost.dto.js';
+import { CreatePostDto, GetPostDto, GetAllPostsDto, EditPostDto, DeletePostDto } from '../dtos/Post.dto.js';
 import { IPostRepository } from '../repositories/interfaces/post.repository.interface.js';
-import { GetPostDto } from '../dtos/GetPost.dto.js';
-import { GetAllPostsDto } from '../dtos/GetAllPosts.dto.js';
-import { EditPostDto } from '../dtos/EditPost.dto.js';
-import { DeletePostDto } from '../dtos/DeletePost.dto.js';
 
 export class PostService {
 	constructor(

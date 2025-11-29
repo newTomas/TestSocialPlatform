@@ -1,10 +1,10 @@
 import { PrismaClient, User } from '../../generated/prisma/client.js';
 import { IUserRepository } from '../interfaces/user.repository.interface.js';
-import { CreateUserDto } from '../../dtos/CreateUser.dto.js';
-import { GetAllUsersDto } from '../../dtos/GetAllUsers.dto.js';
+import { GetAllUsersDto } from '../../dtos/User.dto.js';
 import { IUsers } from '../../interfaces/user.interface.js';
 import { UserFindManyArgs } from '../../generated/prisma/models.js';
 import { TTransactionClient } from '../../interfaces/database.interface.js';
+import { CreateUserDto } from '../../dtos/Auth.dto.js';
 
 export class PrismaUserRepository implements IUserRepository {
 	constructor(private readonly prisma: PrismaClient) { }

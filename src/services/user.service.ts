@@ -1,6 +1,5 @@
 import { IUser, IUsers } from '../interfaces/user.interface.js';
-import { GetAllUsersDto } from '../dtos/GetAllUsers.dto.js';
-import { GetUserDto } from '../dtos/GetUser.dto.js';
+import { GetAllUsersDto, GetUserDto } from '../dtos/User.dto.js';
 import { IUserRepository } from '../repositories/interfaces/user.repository.interface.js';
 
 export class UserService {

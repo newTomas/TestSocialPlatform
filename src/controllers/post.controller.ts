@@ -1,10 +1,6 @@
 import { Request, Response } from 'express';
 import { PostService } from '../services/post.service.js';
-import { CreatePostDto } from '../dtos/CreatePost.dto.js';
-import { GetPostDto } from '../dtos/GetPost.dto.js';
-import { GetAllPostsDto } from '../dtos/GetAllPosts.dto.js';
-import { DeletePostDto } from '../dtos/DeletePost.dto.js';
-import { EditPostDto } from '../dtos/EditPost.dto.js';
+import { CreatePostDto, GetPostDto, GetAllPostsDto, DeletePostDto, EditPostDto } from '../dtos/Post.dto.js';
 
 export class PostController {
   constructor(private readonly postService: PostService) { }

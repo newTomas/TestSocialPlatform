@@ -1,7 +1,7 @@
 import { IPost, IPosts } from '../../interfaces/post.interface.js';
 import { PrismaClient } from '../../generated/prisma/client.js';
 import { IPostRepository } from '../interfaces/post.repository.interface.js';
-import { GetAllPostsDto } from '../../dtos/GetAllPosts.dto.js';
+import { GetAllPostsDto } from '../../dtos/Post.dto.js';
 import { PostFindManyArgs } from '../../generated/prisma/models.js';
 import { TTransactionClient } from '../../interfaces/database.interface.js';
 

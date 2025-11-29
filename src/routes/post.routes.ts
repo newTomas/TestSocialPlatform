@@ -1,15 +1,11 @@
 import { Router } from 'express';
 import prisma from '../utils/prisma.utils.js';
 import { validationMiddleware } from '../middlewares/validation.middleware.js';
-import { CreatePostDto } from '../dtos/CreatePost.dto.js';
+import { CreatePostDto, GetPostDto, GetAllPostsDto, EditPostDto, DeletePostDto } from '../dtos/Post.dto.js';
 import { PostController } from '../controllers/post.controller.js';
 import { PostService } from '../services/post.service.js';
 import { PrismaPostRepository } from '../repositories/prisma/post.repository.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
-import { GetPostDto } from '../dtos/GetPost.dto.js';
-import { GetAllPostsDto } from '../dtos/GetAllPosts.dto.js';
-import { EditPostDto } from '../dtos/EditPost.dto.js';
-import { DeletePostDto } from '../dtos/DeletePost.dto.js';
 
 const router = Router();
 

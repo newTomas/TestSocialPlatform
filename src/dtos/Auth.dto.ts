@@ -1,5 +1,24 @@
 import { Expose } from 'class-transformer';
-import { IsEmail, IsString, Length, IsNotEmpty, IsAlphanumeric } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail, Length, IsAlphanumeric } from 'class-validator';
+
+export class RefreshTokenDto {
+	@Expose()
+	@IsString({ message: 'RefreshToken must be a string.' })
+	@IsNotEmpty({ message: 'RefreshToken is required.' })
+	public refreshToken!: string;
+}
+
+export class LoginUserDto {
+	@Expose()
+	@IsEmail({}, { message: 'Email must be a valid email address.' })
+	@IsNotEmpty({ message: 'Email is required.' })
+	public email!: string;
+
+	@Expose()
+	@IsString({ message: 'Password must be a string.' })
+	@IsNotEmpty({ message: 'Password is required.' })
+	public password!: string;
+}
 
 export class CreateUserDto {
 	@Expose()

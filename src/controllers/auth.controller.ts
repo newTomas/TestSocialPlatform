@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service.js';
-import { CreateUserDto } from '../dtos/CreateUser.dto.js';
-import { LoginUserDto } from '../dtos/LoginUser.dto.js';
-import { RefreshTokenDto } from '../dtos/RefreshToken.dto.js';
+import { CreateUserDto, LoginUserDto, RefreshTokenDto } from '../dtos/Auth.dto.js';
 
 export class AuthController {
   constructor(private readonly authService: AuthService) { }

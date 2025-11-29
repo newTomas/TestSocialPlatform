@@ -2,8 +2,7 @@ import bcrypt from 'bcryptjs';
 import { jwtConfig } from '../config/index.js';
 import { IUserRepository } from '../repositories/interfaces/user.repository.interface.js';
 import { ITokenRepository } from '../repositories/interfaces/token.repository.interface.js'; // Предположим, он есть
-import { CreateUserDto } from '../dtos/CreateUser.dto.js';
-import { LoginUserDto } from '../dtos/LoginUser.dto.js';
+import { CreateUserDto, LoginUserDto } from '../dtos/Auth.dto.js';
 import { IJwtPayload, IAuthResponse } from '../interfaces/auth.interface.js';
 import { signNewTokens, verifyRefreshToken } from '../utils/jwt.utils.js';
 import { User } from '../generated/prisma/client.js';

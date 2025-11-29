@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service.js';
-import { GetUserDto } from '../dtos/GetUser.dto.js';
-import { GetAllUsersDto } from '../dtos/GetAllUsers.dto.js';
+import { GetUserDto, GetAllUsersDto } from '../dtos/User.dto.js';
 
 export class UserController {
   constructor(private readonly userService: UserService) { }

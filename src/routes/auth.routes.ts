@@ -3,12 +3,10 @@ import { AuthController } from '../controllers/auth.controller.js';
 import { AuthService } from '../services/auth.service.js';
 import { PrismaUserRepository } from '../repositories/prisma/user.repository.js';
 import { PrismaTokenRepository } from '../repositories/prisma/token.repository.js';
-import prisma from '../utils/prisma.utils.js'; 
+import prisma from '../utils/prisma.utils.js';
 import { validationMiddleware } from '../middlewares/validation.middleware.js';
-import { CreateUserDto } from '../dtos/CreateUser.dto.js';
+import { CreateUserDto, LoginUserDto, RefreshTokenDto } from '../dtos/Auth.dto.js';
 import { PrismaDatabaseService } from '../database/prisma.database.service.js';
-import { LoginUserDto } from '../dtos/LoginUser.dto.js';
-import { RefreshTokenDto } from '../dtos/RefreshToken.dto.js';
 
 const router = Router();
 

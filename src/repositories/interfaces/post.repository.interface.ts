@@ -1,4 +1,4 @@
-import { GetAllPostsDto } from "../../dtos/GetAllPosts.dto.js";
+import { GetAllPostsDto } from "../../dtos/Post.dto.js";
 import { TTransactionClient } from "../../interfaces/database.interface.js";
 import { IPost, IPosts } from "../../interfaces/post.interface.js";
 
