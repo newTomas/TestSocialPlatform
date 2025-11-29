@@ -3,12 +3,17 @@ import { PrismaClient } from '../../generated/prisma/client.js';
 import { IPostRepository } from '../interfaces/post.repository.interface.js';
 import { GetAllPostsDto } from '../../dtos/GetAllPosts.dto.js';
 import { PostFindManyArgs } from '../../generated/prisma/models.js';
+import { TTransactionClient } from '../../interfaces/database.interface.js';
 
 export class PrismaPostRepository implements IPostRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
-  async create(userId: string, text: string): Promise<IPost> {
-    const post = await this.prisma.post.create({
+	private getClient(tx?: TTransactionClient): PrismaClient {
+		return tx ?? this.prisma;
+	}
+
+  async create(userId: string, text: string, tx?: TTransactionClient): Promise<IPost> {
+    const post = await this.getClient(tx).post.create({
       data: {
         userId,
         text,
@@ -17,8 +22,8 @@ export class PrismaPostRepository implements IPostRepository {
     return post;
   }
 
-  async get(id: string): Promise<IPost | null> {
-    const post = await this.prisma.post.findUnique({
+  async get(id: string, tx?: TTransactionClient): Promise<IPost | null> {
+    const post = await this.getClient(tx).post.findUnique({
       where: {
         id,
         deletedAt: null,
@@ -28,7 +33,7 @@ export class PrismaPostRepository implements IPostRepository {
     return post;
   }
 
-  async getAll(dto: GetAllPostsDto): Promise<IPosts> {
+  async getAll(dto: GetAllPostsDto, tx?: TTransactionClient): Promise<IPosts> {
     let args: PostFindManyArgs = {
       where: {
         deletedAt: null,
@@ -49,7 +54,7 @@ export class PrismaPostRepository implements IPostRepository {
       }
     }
 
-    const posts = await this.prisma.post.findMany(args);
+    const posts = await this.getClient(tx).post.findMany(args);
 
     return {
       cursor: posts.at(-1)?.id,
@@ -57,8 +62,8 @@ export class PrismaPostRepository implements IPostRepository {
     }
   }
 
-  async edit(userId: string, id: string, text: string): Promise<IPost | null> {
-    const post = await this.prisma.post.update({
+  async edit(userId: string, id: string, text: string, tx?: TTransactionClient): Promise<IPost | null> {
+    const post = await this.getClient(tx).post.update({
       where: {
         id,
         userId,
@@ -71,8 +76,8 @@ export class PrismaPostRepository implements IPostRepository {
     return post;
   }
 
-  async delete(userId: string, id: string): Promise<boolean> {
-    const res = await this.prisma.post.update({
+  async delete(userId: string, id: string, tx?: TTransactionClient): Promise<boolean> {
+    const res = await this.getClient(tx).post.update({
       where: {
         id,
         userId,

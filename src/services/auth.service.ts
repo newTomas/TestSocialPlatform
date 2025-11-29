@@ -7,11 +7,13 @@ import { LoginUserDto } from '../dtos/LoginUser.dto.js';
 import { IJwtPayload, IAuthResponse } from '../interfaces/auth.interface.js';
 import { signNewTokens, verifyRefreshToken } from '../utils/jwt.utils.js';
 import { User } from '../generated/prisma/client.js';
+import { IDatabaseService, TTransactionClient } from '../interfaces/database.interface.js';
 
 export class AuthService {
 	constructor(
 		private readonly userRepo: IUserRepository,
-		private readonly tokenRepo: ITokenRepository
+		private readonly tokenRepo: ITokenRepository,
+		private readonly dbService: IDatabaseService,
 	) { }
 
 	async register(dto: CreateUserDto): Promise<IAuthResponse> {
@@ -20,9 +22,13 @@ export class AuthService {
 
 		const passwordHash = await bcrypt.hash(dto.password, jwtConfig.saltRounds);
 
-		const user = await this.userRepo.create({ ...dto, passwordHash });
+		const tokens = this.dbService.runInTransaction(async tx => {
+			const user = await this.userRepo.create({ ...dto, passwordHash }, tx);
 
-		return this.generateTokens(user);
+			return this.generateTokens(user, tx);
+		});
+
+		return tokens;
 	}
 
 	async login(dto: LoginUserDto): Promise<IAuthResponse> {
@@ -35,7 +41,7 @@ export class AuthService {
 		return this.generateTokens(user);
 	}
 
-	private async generateTokens(user: User): Promise<IAuthResponse> {
+	private async generateTokens(user: User, tx?: TTransactionClient): Promise<IAuthResponse> {
 
 		const payload: IJwtPayload = { userId: user.id, email: user.email };
 
@@ -44,7 +50,7 @@ export class AuthService {
 		const refreshDurationMs = jwtConfig.refreshExpiresIn * 1000;
 		const expiresAt = new Date(Date.now() + refreshDurationMs);
 
-		await this.tokenRepo.save(user.id, tokens.refreshToken, expiresAt);
+		await this.tokenRepo.save(user.id, tokens.refreshToken, expiresAt, tx);
 
 		return {
 			user: { id: user.id, email: user.email, name: user.name },
@@ -81,8 +87,10 @@ export class AuthService {
 			throw new Error('User not found.');
 		}
 
-		await this.tokenRepo.deleteById(savedToken.id);
+		return this.dbService.runInTransaction(async tx => {
+			await this.tokenRepo.deleteById(savedToken.id, tx);
 
-		return this.generateTokens(user);
+			return this.generateTokens(user, tx);
+		});
 	}
 }

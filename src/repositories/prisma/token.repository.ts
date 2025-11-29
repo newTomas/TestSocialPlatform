@@ -1,11 +1,16 @@
 import { PrismaClient, RefreshToken } from '../../generated/prisma/client.js';
+import { TTransactionClient } from '../../interfaces/database.interface.js';
 import { ITokenRepository } from '../interfaces/token.repository.interface.js';
 
 export class PrismaTokenRepository implements ITokenRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async save(userId: string, token: string, expiresAt: Date): Promise<RefreshToken> {
-    return this.prisma.refreshToken.create({
+	private getClient(tx?: TTransactionClient): PrismaClient {
+		return tx ?? this.prisma;
+	}
+
+  async save(userId: string, token: string, expiresAt: Date, tx?: TTransactionClient): Promise<RefreshToken> {
+    return this.getClient(tx).refreshToken.create({
       data: {
         userId,
         token,
@@ -14,20 +19,20 @@ export class PrismaTokenRepository implements ITokenRepository {
     });
   }
 
-  async findByToken(token: string): Promise<RefreshToken | null> {
-    return this.prisma.refreshToken.findFirst({
+  async findByToken(token: string, tx?: TTransactionClient): Promise<RefreshToken | null> {
+    return this.getClient(tx).refreshToken.findFirst({
       where: { token },
     });
   }
 
-  async deleteById(id: bigint): Promise<void> {
-    await this.prisma.refreshToken.delete({
+  async deleteById(id: bigint, tx?: TTransactionClient): Promise<void> {
+    await this.getClient(tx).refreshToken.delete({
       where: { id },
     });
   }
 
-  async deleteAllByUserId(userId: string): Promise<void> {
-    await this.prisma.refreshToken.deleteMany({
+  async deleteAllByUserId(userId: string, tx?: TTransactionClient): Promise<void> {
+    await this.getClient(tx).refreshToken.deleteMany({
       where: { userId },
     });
   }

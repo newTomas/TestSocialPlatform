@@ -4,12 +4,17 @@ import { CreateUserDto } from '../../dtos/CreateUser.dto.js';
 import { GetAllUsersDto } from '../../dtos/GetAllUsers.dto.js';
 import { IUsers } from '../../interfaces/user.interface.js';
 import { UserFindManyArgs } from '../../generated/prisma/models.js';
+import { TTransactionClient } from '../../interfaces/database.interface.js';
 
 export class PrismaUserRepository implements IUserRepository {
 	constructor(private readonly prisma: PrismaClient) { }
 
-	async create(data: CreateUserDto & { passwordHash: string }): Promise<User> {
-		return this.prisma.user.create({
+	private getClient(tx?: TTransactionClient): PrismaClient {
+		return tx ?? this.prisma;
+	}
+
+	async create(data: CreateUserDto & { passwordHash: string }, tx?: TTransactionClient): Promise<User> {
+		return this.getClient(tx).user.create({
 			data: {
 				email: data.email,
 				name: data.name,
@@ -18,15 +23,15 @@ export class PrismaUserRepository implements IUserRepository {
 		});
 	}
 
-	async findByEmail(email: string): Promise<User | null> {
-		return this.prisma.user.findUnique({ where: { email } });
+	async findByEmail(email: string, tx?: TTransactionClient): Promise<User | null> {
+		return this.getClient(tx).user.findUnique({ where: { email } });
 	}
 
-	async findById(id: string): Promise<User | null> {
-		return this.prisma.user.findUnique({ where: { id } });
+	async findById(id: string, tx?: TTransactionClient): Promise<User | null> {
+		return this.getClient(tx).user.findUnique({ where: { id } });
 	}
 
-	async getAll(dto: GetAllUsersDto): Promise<IUsers> {
+	async getAll(dto: GetAllUsersDto, tx?: TTransactionClient): Promise<IUsers> {
 			let args: UserFindManyArgs = {
 				orderBy: {
 					id: "desc",
@@ -40,7 +45,7 @@ export class PrismaUserRepository implements IUserRepository {
 				}
 			}
 	
-			const posts = await this.prisma.user.findMany(args);
+			const posts = await this.getClient(tx).user.findMany(args);
 	
 			return {
 				cursor: posts.at(-1)?.id,

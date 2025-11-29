@@ -6,13 +6,15 @@ import { PrismaTokenRepository } from '../repositories/prisma/token.repository.j
 import prisma from '../utils/prisma.utils.js'; 
 import { validationMiddleware } from '../middlewares/validation.middleware.js';
 import { CreateUserDto } from '../dtos/CreateUser.dto.js';
+import { PrismaDatabaseService } from '../database/prisma.database.service.js';
 
 const router = Router();
 
 const userRepo = new PrismaUserRepository(prisma);
 const tokenRepo = new PrismaTokenRepository(prisma);
+const dbService = new PrismaDatabaseService(prisma);
 
-const authService = new AuthService(userRepo, tokenRepo);
+const authService = new AuthService(userRepo, tokenRepo, dbService);
 
 const authController = new AuthController(authService);
 
