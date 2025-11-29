@@ -43,7 +43,7 @@ export class AuthService {
 
 	private async generateTokens(user: User, tx?: TTransactionClient): Promise<IAuthResponse> {
 
-		const payload: IJwtPayload = { userId: user.id, email: user.email };
+		const payload: IJwtPayload = { userId: user.id };
 
 		const tokens = signNewTokens(payload);
 

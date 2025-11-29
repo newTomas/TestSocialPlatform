@@ -26,11 +26,13 @@ model Post {
   deletedAt DateTime?
 
   userId String
+
+  @@index([deletedAt, userId]) // where deletedAt is NULL [and userId = $1]
 }
 
 model RefreshToken {
   id        BigInt   @id @default(autoincrement())
-  token     String   @db.Text
+  token     String   @unique(length: 255) @db.Text // Current JWT with only userId in payload takes 192 chars
   User      User     @relation(fields: [userId], references: [id])
   expiredAt DateTime
   createdAt DateTime @default(now())

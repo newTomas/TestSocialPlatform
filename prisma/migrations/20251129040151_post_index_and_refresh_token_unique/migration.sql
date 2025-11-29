@@ -1,0 +1,11 @@
+/*
+  Warnings:
+
+  - A unique constraint covering the columns `[token]` on the table `RefreshToken` will be added. If there are existing duplicate values, this will fail.
+
+*/
+-- CreateIndex
+CREATE INDEX `Post_deletedAt_userId_idx` ON `Post`(`deletedAt`, `userId`);
+
+-- CreateIndex
+CREATE UNIQUE INDEX `RefreshToken_token_key` ON `RefreshToken`(`token`(255));
