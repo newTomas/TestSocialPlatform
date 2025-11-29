@@ -5,5 +5,5 @@ export interface IUser {
 
 export interface IUsers {
 	cursor?: string | undefined;
-	posts: IUser[];
+	users: IUser[];
 }

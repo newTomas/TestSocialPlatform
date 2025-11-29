@@ -14,30 +14,73 @@ export class PostService {
 	async GetPost(dto: GetPostDto): Promise<IPost | null> {
 		const post = await this.postRepo.get(dto.id);
 
-		return post;
+		if (!post) return null;
+
+		return {
+			id: post.id,
+			userId: post.userId,
+			text: post.text,
+			createdAt: post.createdAt,
+		};
 	}
 
 	async GetAllPosts(dto: GetAllPostsDto): Promise<IPosts> {
 		const post = await this.postRepo.getAll(dto);
 
-		return post;
+		return {
+			cursor: post.cursor,
+			posts: post.posts.map(post => ({
+				id: post.id,
+				userId: post.userId,
+				text: post.text,
+				createdAt: post.createdAt,
+			})),
+		};
 	}
 
 	async CreatePost(userId: string, dto: CreatePostDto): Promise<IPost> {
 		const post = await this.postRepo.create(userId, dto.text);
 
-		return post;
+		return {
+			id: post.id,
+			userId: post.userId,
+			text: post.text,
+			createdAt: post.createdAt,
+		};
 	}
 
 	async EditPost(userId: string, dto: EditPostDto): Promise<IPost | null> {
+		const existPost = await this.postRepo.get(dto.id);
+
+		if(!existPost) return null;
+
+		if(existPost.userId != userId) {
+			throw new Error(`The post can only be edited by the author!`);
+		}
+
 		const post = await this.postRepo.edit(userId, dto.id, dto.text);
 
-		return post;
+		if (!post) return null;
+
+		return {
+			id: post.id,
+			userId: post.userId,
+			text: post.text,
+			createdAt: post.createdAt,
+		};
 	}
 
 	async DeletePost(userId: string, dto: DeletePostDto): Promise<boolean> {
-		const post = await this.postRepo.delete(userId, dto.id);
+		const existPost = await this.postRepo.get(dto.id);
 
-		return post;
+		if(!existPost) return false;
+
+		if(existPost.userId != userId) {
+			throw new Error(`The post can only be deleted by the author!`);
+		}
+
+		const deleted = await this.postRepo.delete(userId, dto.id);
+
+		return deleted;
 	}
 }

@@ -70,6 +70,7 @@ export class PrismaPostRepository implements IPostRepository {
       },
       data: {
         text,
+        updatedAt: new Date(),
       }
     });
 

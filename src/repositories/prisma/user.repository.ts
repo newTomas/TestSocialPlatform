@@ -32,24 +32,24 @@ export class PrismaUserRepository implements IUserRepository {
 	}
 
 	async getAll(dto: GetAllUsersDto, tx?: TTransactionClient): Promise<IUsers> {
-			let args: UserFindManyArgs = {
-				orderBy: {
-					id: "desc",
-				},
-				take: dto.limit,
-			};
-	
-			if (dto.cursor) {
-				args.cursor = {
-					id: dto.cursor
-				}
+		let args: UserFindManyArgs = {
+			orderBy: {
+				id: "desc",
+			},
+			take: dto.limit,
+		};
+
+		if (dto.cursor) {
+			args.cursor = {
+				id: dto.cursor
 			}
-	
-			const posts = await this.getClient(tx).user.findMany(args);
-	
-			return {
-				cursor: posts.at(-1)?.id,
-				posts: posts,
-			}
+		}
+
+		const users = await this.getClient(tx).user.findMany(args);
+
+		return {
+			cursor: users.at(-1)?.id,
+			users,
+		}
 	}
 }

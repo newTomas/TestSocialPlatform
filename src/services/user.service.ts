@@ -11,12 +11,23 @@ export class UserService {
 	async GetUser(dto: GetUserDto): Promise<IUser | null> {
 		const user = await this.userRepo.findById(dto.id);
 
-		return user;
+		if (!user) return null;
+
+		return {
+			id: user.id,
+			name: user.name,
+		};
 	}
 
 	async GetAllUsers(dto: GetAllUsersDto): Promise<IUsers> {
 		const users = await this.userRepo.getAll(dto);
 
-		return users;
+		return {
+			cursor: users.cursor,
+			users: users.users.map(user => ({
+				id: user.id,
+				name: user.name,
+			}))
+		};
 	}
 }

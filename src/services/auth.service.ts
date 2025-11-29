@@ -60,10 +60,6 @@ export class AuthService {
 	}
 
 	public async refresh(refreshToken: string): Promise<IAuthResponse> {
-		if (!refreshToken) {
-			throw new Error('Refresh token is required.');
-		}
-
 		let payload: IJwtPayload;
 		try {
 			payload = verifyRefreshToken(refreshToken);

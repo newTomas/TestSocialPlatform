@@ -1,20 +1,21 @@
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber, IsString, IsUUID, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
 
 export class GetAllPostsDto {
 	@Expose()
-	@IsString({ message: 'Cursor must be a number.' })
-	@Transform(val => BigInt(val.value))
+	@IsOptional()
+	@IsString({ message: 'Cursor must be a string.' })
 	public cursor?: string;
 
 	@Expose()
+	@Transform(({ value }) => parseInt(value ?? 100, 10))
 	@IsNumber({}, { message: 'Limit must be a number.' })
-	@Transform(val => BigInt(val.value))
 	@Min(1)
 	@Max(1000)
-	public limit: number = 100;
+	public limit!: number;
 
 	@Expose()
+	@IsOptional()
 	@IsUUID(7, { message: 'userId must be a UUID.' })
 	public userId?: string;
 }
