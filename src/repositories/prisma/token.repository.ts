@@ -20,7 +20,7 @@ export class PrismaTokenRepository implements ITokenRepository {
   }
 
   async findByToken(token: string, tx?: TTransactionClient): Promise<RefreshToken | null> {
-    return this.getClient(tx).refreshToken.findFirst({
+    return this.getClient(tx).refreshToken.findUnique({
       where: { token },
     });
   }
