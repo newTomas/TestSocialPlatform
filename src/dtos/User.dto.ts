@@ -1,5 +1,5 @@
 import { Expose, Transform } from 'class-transformer';
-import { IsEmail, IsString, IsNotEmpty, IsUUID, IsNumber, IsOptional, Max, Min, IsAlphanumeric, Length } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 export class GetUserDto {
 	@Expose()
@@ -20,4 +20,10 @@ export class GetAllUsersDto {
 	@Min(1)
 	@Max(1000)
 	public limit!: number;
+}
+
+export class UserResponseDto {
+	public id!: string;
+	public name!: string;
+	public createdAt!: Date;
 }

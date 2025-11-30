@@ -1,82 +1,55 @@
-import { IPost, IPosts } from '../interfaces/post.interface.js';
+import { IPosts } from '../interfaces/post.interface.js';
 import { CreatePostDto, GetPostDto, GetAllPostsDto, EditPostDto, DeletePostDto } from '../dtos/Post.dto.js';
 import { IPostRepository } from '../repositories/interfaces/post.repository.interface.js';
+import { PostEntity } from '../domain/post.entity.js';
+import { IJwtPayload } from '../interfaces/auth.interface.js';
 
 export class PostService {
 	constructor(
 		private readonly postRepo: IPostRepository
 	) { }
 
-	async GetPost(dto: GetPostDto): Promise<IPost | null> {
+	async GetPost(dto: GetPostDto): Promise<PostEntity | null> {
 		const post = await this.postRepo.get(dto.id);
 
 		if (!post) return null;
 
-		return {
-			id: post.id,
-			userId: post.userId,
-			text: post.text,
-			createdAt: post.createdAt,
-		};
+		return post;
 	}
 
 	async GetAllPosts(dto: GetAllPostsDto): Promise<IPosts> {
-		const post = await this.postRepo.getAll(dto);
+		const posts = await this.postRepo.getAll(dto);
 
-		return {
-			cursor: post.cursor,
-			posts: post.posts.map(post => ({
-				id: post.id,
-				userId: post.userId,
-				text: post.text,
-				createdAt: post.createdAt,
-			})),
-		};
+		return posts;
 	}
 
-	async CreatePost(userId: string, dto: CreatePostDto): Promise<IPost> {
-		const post = await this.postRepo.create(userId, dto.text);
+	async CreatePost(user: IJwtPayload, dto: CreatePostDto): Promise<PostEntity> {
+		const post = await this.postRepo.create(user.userId, dto.text);
 
-		return {
-			id: post.id,
-			userId: post.userId,
-			text: post.text,
-			createdAt: post.createdAt,
-		};
+		return post;
 	}
 
-	async EditPost(userId: string, dto: EditPostDto): Promise<IPost | null> {
+	async EditPost(user: IJwtPayload, dto: EditPostDto): Promise<PostEntity | null> {
 		const existPost = await this.postRepo.get(dto.id);
 
-		if(!existPost) return null;
+		if (!existPost) return null;
 
-		if(existPost.userId != userId) {
-			throw new Error(`The post can only be edited by the author!`);
-		}
+		existPost.updateText(dto.text, user);
 
-		const post = await this.postRepo.edit(userId, dto.id, dto.text);
+		const post = await this.postRepo.save(existPost);
 
-		if (!post) return null;
-
-		return {
-			id: post.id,
-			userId: post.userId,
-			text: post.text,
-			createdAt: post.createdAt,
-		};
+		return post;
 	}
 
-	async DeletePost(userId: string, dto: DeletePostDto): Promise<boolean> {
+	async DeletePost(user: IJwtPayload, dto: DeletePostDto): Promise<PostEntity | null> {
 		const existPost = await this.postRepo.get(dto.id);
 
-		if(!existPost) return false;
+		if (!existPost) return null;
 
-		if(existPost.userId != userId) {
-			throw new Error(`The post can only be deleted by the author!`);
-		}
+		existPost.delete(user);
 
-		const deleted = await this.postRepo.delete(userId, dto.id);
+		const post = await this.postRepo.save(existPost);
 
-		return deleted;
+		return post;
 	}
 }

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service.js';
 import { GetUserDto, GetAllUsersDto } from '../dtos/User.dto.js';
+import { UserMapper } from '../mappers/user.mapper.js';
 
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -11,7 +12,11 @@ export class UserController {
 
       const result = await this.userService.GetUser(dto);
 
-      return res.status(result ? 200 : 404).json(result);
+      if (!result) return res.status(404).json(result);
+
+      const resultDtos = UserMapper.toResponseDto(result);
+
+      return res.status(200).json(resultDtos);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -23,7 +28,14 @@ export class UserController {
 
       const result = await this.userService.GetAllUsers(dto);
 
-      return res.status(result ? 200 : 404).json(result);
+      if (!result) return res.status(404).json(result);
+
+      const usersDtos = result.users.map(UserMapper.toResponseDto);
+
+      return res.status(200).json({
+        cursor: result.cursor,
+        users: usersDtos,
+      });
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }

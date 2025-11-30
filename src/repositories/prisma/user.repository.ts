@@ -1,10 +1,11 @@
-import { PrismaClient, User } from '../../generated/prisma/client.js';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import { IUserRepository } from '../interfaces/user.repository.interface.js';
 import { GetAllUsersDto } from '../../dtos/User.dto.js';
-import { IUsers } from '../../interfaces/user.interface.js';
 import { UserFindManyArgs } from '../../generated/prisma/models.js';
 import { TTransactionClient } from '../../interfaces/database.interface.js';
 import { CreateUserDto } from '../../dtos/Auth.dto.js';
+import { UserEntity } from '../../domain/user.entity.js';
+import { IUsers } from '../../interfaces/user.interface.js';
 
 export class PrismaUserRepository implements IUserRepository {
 	constructor(private readonly prisma: PrismaClient) { }
@@ -13,22 +14,32 @@ export class PrismaUserRepository implements IUserRepository {
 		return tx ?? this.prisma;
 	}
 
-	async create(data: CreateUserDto & { passwordHash: string }, tx?: TTransactionClient): Promise<User> {
-		return this.getClient(tx).user.create({
+	async create(data: CreateUserDto & { passwordHash: string }, tx?: TTransactionClient): Promise<UserEntity> {
+		const user = await this.getClient(tx).user.create({
 			data: {
 				email: data.email,
 				name: data.name,
 				password: data.passwordHash,
 			},
 		});
+
+		return UserEntity.fromDto(user);
 	}
 
-	async findByEmail(email: string, tx?: TTransactionClient): Promise<User | null> {
-		return this.getClient(tx).user.findUnique({ where: { email } });
+	async findByEmail(email: string, tx?: TTransactionClient): Promise<UserEntity | null> {
+		const user = await this.getClient(tx).user.findUnique({ where: { email } });
+
+		if (!user) return null;
+
+		return UserEntity.fromDto(user);
 	}
 
-	async findById(id: string, tx?: TTransactionClient): Promise<User | null> {
-		return this.getClient(tx).user.findUnique({ where: { id } });
+	async findById(id: string, tx?: TTransactionClient): Promise<UserEntity | null> {
+		const user = await this.getClient(tx).user.findUnique({ where: { id } });
+
+		if (!user) return null;
+
+		return UserEntity.fromDto(user);
 	}
 
 	async getAll(dto: GetAllUsersDto, tx?: TTransactionClient): Promise<IUsers> {
@@ -48,8 +59,8 @@ export class PrismaUserRepository implements IUserRepository {
 		const users = await this.getClient(tx).user.findMany(args);
 
 		return {
-			cursor: users.at(-1)?.id,
-			users,
-		}
+			cursor: users.length == dto.limit ? users[dto.limit - 1]!.id : null,
+			users: users.map(UserEntity.fromDto),
+		};
 	}
 }

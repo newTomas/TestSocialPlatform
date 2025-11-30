@@ -3,10 +3,10 @@ import { jwtConfig } from '../config/index.js';
 import { IUserRepository } from '../repositories/interfaces/user.repository.interface.js';
 import { ITokenRepository } from '../repositories/interfaces/token.repository.interface.js'; // Предположим, он есть
 import { CreateUserDto, LoginUserDto } from '../dtos/Auth.dto.js';
-import { IJwtPayload, IAuthResponse } from '../interfaces/auth.interface.js';
+import { AuthDomainResult, IJwtPayload } from '../interfaces/auth.interface.js';
 import { signNewTokens, verifyRefreshToken } from '../utils/jwt.utils.js';
-import { User } from '../generated/prisma/client.js';
 import { IDatabaseService, TTransactionClient } from '../interfaces/database.interface.js';
+import { UserEntity } from '../domain/user.entity.js';
 
 export class AuthService {
 	constructor(
@@ -15,7 +15,7 @@ export class AuthService {
 		private readonly dbService: IDatabaseService,
 	) { }
 
-	async register(dto: CreateUserDto): Promise<IAuthResponse> {
+	async register(dto: CreateUserDto): Promise<AuthDomainResult> {
 		const existing = await this.userRepo.findByEmail(dto.email);
 		if (existing) throw new Error('User already exists');
 
@@ -30,17 +30,18 @@ export class AuthService {
 		return tokens;
 	}
 
-	async login(dto: LoginUserDto): Promise<IAuthResponse> {
+	async login(dto: LoginUserDto): Promise<AuthDomainResult> {
 		const user = await this.userRepo.findByEmail(dto.email);
 		if (!user) throw new Error('Invalid credentials');
 
-		const isValid = await bcrypt.compare(dto.password, user.password);
+		const isValid = user.checkPassword(dto.password);
+
 		if (!isValid) throw new Error('Invalid credentials');
 
 		return this.generateTokens(user);
 	}
 
-	private async generateTokens(user: User, tx?: TTransactionClient): Promise<IAuthResponse> {
+	private async generateTokens(user: UserEntity, tx?: TTransactionClient): Promise<AuthDomainResult> {
 
 		const payload: IJwtPayload = { userId: user.id };
 
@@ -49,16 +50,16 @@ export class AuthService {
 		const refreshDurationMs = jwtConfig.refreshExpiresIn * 1000;
 		const expiresAt = new Date(Date.now() + refreshDurationMs);
 
-		await this.tokenRepo.save(user.id, tokens.refreshToken, expiresAt, tx);
+		const refreshToken = await this.tokenRepo.save(user.id, tokens.refreshToken, expiresAt, tx);
 
 		return {
-			user: { id: user.id, email: user.email, name: user.name },
+			user,
 			accessToken: tokens.accessToken,
-			refreshToken: tokens.refreshToken,
+			refreshToken: refreshToken,
 		};
 	}
 
-	public async refresh(refreshToken: string): Promise<IAuthResponse> {
+	public async refresh(refreshToken: string): Promise<AuthDomainResult> {
 		let payload: IJwtPayload;
 		try {
 			payload = verifyRefreshToken(refreshToken);
@@ -72,7 +73,7 @@ export class AuthService {
 			throw new Error('Refresh token not found or revoked.');
 		}
 
-		if (savedToken.expiredAt < new Date()) {
+		if (savedToken.isExpired()) {
 			await this.tokenRepo.deleteById(savedToken.id);
 			throw new Error('Refresh token expired.');
 		}

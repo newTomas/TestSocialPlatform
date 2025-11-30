@@ -1,3 +1,6 @@
+import { RefreshTokenEntity } from "../domain/refreshToken.entity.js";
+import { UserEntity } from "../domain/user.entity.js";
+
 export interface IJwtPayload {
   userId: string;
 }
@@ -8,12 +11,8 @@ export function isIJwtPayload(data: unknown): data is IJwtPayload {
   return typeof (data as IJwtPayload).userId == "string";
 }
 
-export interface IAuthResponse {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+export interface AuthDomainResult {
+  user: UserEntity;
   accessToken: string;
-  refreshToken: string;
+  refreshToken: RefreshTokenEntity;
 }

@@ -1,9 +1,6 @@
-export interface IUser {
-	id: string;
-	name: string;
-}
+import { UserEntity } from "../domain/user.entity.js";
 
 export interface IUsers {
-	cursor?: string | undefined;
-	users: IUser[];
+	cursor: string | null;
+	users: UserEntity[];
 }

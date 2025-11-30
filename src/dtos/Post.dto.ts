@@ -61,3 +61,11 @@ export class CreatePostDto {
 	@Length(2, 4096, { message: 'Text must be between 2 and 4096 characters.' })
 	public text!: string;
 }
+
+export class PostResponseDto {
+	public id!: string;
+	public userId!: string;
+	public text!: string;
+	public createdAt!: Date;
+	public updatedAt!: Date | null;
+}

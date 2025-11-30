@@ -1,11 +1,6 @@
-export interface IPost {
-	id: string;
-	userId: string;
-	text: string;
-  createdAt: Date;
-}
+import { PostEntity } from "../domain/post.entity.js";
 
 export interface IPosts {
-	cursor?: string | undefined;
-	posts: IPost[];
+	cursor: string | null;
+	posts: PostEntity[];
 }

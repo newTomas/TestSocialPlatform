@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { PostService } from '../services/post.service.js';
 import { CreatePostDto, GetPostDto, GetAllPostsDto, DeletePostDto, EditPostDto } from '../dtos/Post.dto.js';
+import { PostMapper } from '../mappers/post.mapper.js';
 
 export class PostController {
   constructor(private readonly postService: PostService) { }
@@ -11,7 +12,11 @@ export class PostController {
 
       const result = await this.postService.GetPost(dto);
 
-      return res.status(result ? 200 : 404).json(result);
+      if (!result) return res.status(404).json(result);
+
+      const resultDtos = PostMapper.toResponseDto(result);
+
+      return res.status(200).json(resultDtos);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -23,7 +28,12 @@ export class PostController {
 
       const result = await this.postService.GetAllPosts(dto);
 
-      return res.status(result ? 200 : 404).json(result);
+      const postsDtos = result.posts.map(PostMapper.toResponseDto);
+
+      return res.status(200).json({
+        cursor: result.cursor,
+        posts: postsDtos,
+      });
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -33,9 +43,11 @@ export class PostController {
     try {
       const dto: CreatePostDto = req.body;
 
-      const result = await this.postService.CreatePost(req.user!.userId, dto);
+      const result = await this.postService.CreatePost(req.user!, dto);
 
-      return res.status(201).json(result);
+      const resultDtos = PostMapper.toResponseDto(result);
+
+      return res.status(201).json(resultDtos);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -45,9 +57,13 @@ export class PostController {
     try {
       const dto: DeletePostDto = req.body;
 
-      const result = await this.postService.DeletePost(req.user!.userId, dto);
+      const result = await this.postService.DeletePost(req.user!, dto);
 
-      return res.status(result ? 200 : 404).json(result);
+      if (!result) return res.status(404).json(result);
+
+      const resultDtos = PostMapper.toResponseDto(result);
+
+      return res.status(200).json(resultDtos);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -57,9 +73,13 @@ export class PostController {
     try {
       const dto: EditPostDto = req.body;
 
-      const result = await this.postService.EditPost(req.user!.userId, dto);
+      const result = await this.postService.EditPost(req.user!, dto);
 
-      return res.status(result ? 200 : 404).json(result);
+      if (!result) return res.status(404).json(result);
+
+      const resultDtos = PostMapper.toResponseDto(result);
+
+      return res.status(200).json(resultDtos);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
