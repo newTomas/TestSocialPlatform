@@ -34,7 +34,7 @@ export class AuthService {
 		const user = await this.userRepo.findByEmail(dto.email);
 		if (!user) throw new Error('Invalid credentials');
 
-		const isValid = user.checkPassword(dto.password);
+		const isValid = await user.checkPassword(dto.password);
 
 		if (!isValid) throw new Error('Invalid credentials');
 

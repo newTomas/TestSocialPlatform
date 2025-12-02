@@ -8,7 +8,7 @@ export class RefreshTokenEntity {
 	}
 
 	public isExpired(): boolean {
-		return this.props.expiredAt > new Date();
+		return this.props.expiredAt < new Date();
 	}
 
 	public getSnapshot(): RefreshToken {
